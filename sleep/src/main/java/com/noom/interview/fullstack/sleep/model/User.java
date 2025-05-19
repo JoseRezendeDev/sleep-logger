@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class User {
-    private String id;
+    private int id;
     private String name;
     private Set<SleepLog> sleepLogs;
 
@@ -12,7 +12,7 @@ public class User {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name);
+        return id == user.id && Objects.equals(name, user.name);
     }
 
     @Override
