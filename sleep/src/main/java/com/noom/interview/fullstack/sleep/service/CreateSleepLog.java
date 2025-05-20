@@ -2,6 +2,7 @@ package com.noom.interview.fullstack.sleep.service;
 
 import com.noom.interview.fullstack.sleep.dto.CreateSleepLogRequest;
 import com.noom.interview.fullstack.sleep.dto.SleepLogDTO;
+import com.noom.interview.fullstack.sleep.mapper.SleepLogMapper;
 import com.noom.interview.fullstack.sleep.model.MorningMood;
 import com.noom.interview.fullstack.sleep.model.SleepLog;
 import com.noom.interview.fullstack.sleep.model.User;
@@ -42,13 +43,7 @@ public class CreateSleepLog {
 
         SleepLog createdSleepLog = sleepLogRepository.save(sleepLog);
 
-        return toDTO(createdSleepLog);
-    }
-
-    private SleepLogDTO toDTO(SleepLog sleepLog) {
-        return new SleepLogDTO(sleepLog.getSleepDate(), sleepLog.getGoToBedTime(),
-                sleepLog.getWakeUpTime(), sleepLog.getTotalTimeInBed(),
-                sleepLog.getMorningMood());
+        return SleepLogMapper.toDTO(createdSleepLog);
     }
 
     private void validateRequest(CreateSleepLogRequest request) {
