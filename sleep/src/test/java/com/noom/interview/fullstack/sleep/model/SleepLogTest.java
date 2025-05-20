@@ -14,7 +14,7 @@ class SleepLogTest {
 
     @Test
     public void constructorSleepBeforeMidnightTest() {
-        User user = new User();
+        User user = new User(1, "Jose");
         LocalTime goToBedTime = LocalTime.of(22, 30);
         LocalTime wakeUpTime = LocalTime.of(7, 0);
 
@@ -30,7 +30,7 @@ class SleepLogTest {
 
     @Test
     public void constructorSleepAfterMidnightTest() {
-        User user = new User();
+        User user = new User(1, "Jose");
         LocalTime goToBedTime = LocalTime.of(1, 0);
         LocalTime wakeUpTime = LocalTime.of(10, 40);
 
@@ -42,5 +42,19 @@ class SleepLogTest {
         assertEquals(Duration.parse("PT9H40M"), sleepLog.getTotalTimeInBed());
         assertEquals(LocalDate.now(), sleepLog.getSleepDate());
         assertEquals(user, sleepLog.getUser());
+    }
+
+    @Test
+    public void constructorNullUser() {
+        LocalTime goToBedTime = LocalTime.of(1, 0);
+        LocalTime wakeUpTime = LocalTime.of(10, 40);
+
+        try {
+            new SleepLog(goToBedTime, wakeUpTime, MorningMood.GOOD, null);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertNotNull(e);
+            assertEquals("Cannot create a Sleep Log without a user", e.getMessage());
+        }
     }
 }
