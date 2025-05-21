@@ -38,22 +38,24 @@ class CreateSleepLogTest {
     public void createHappyFlow() {
         User user = new User(1, "Jose Rezende");
 
-        CreateSleepLogRequest request = new CreateSleepLogRequest("22:30", "07:00", "GOOD", user.getId());
+        LocalDate sleepDate = LocalDate.parse("2025-05-10");
+
+        CreateSleepLogRequest request = new CreateSleepLogRequest(sleepDate.toString(), "22:30", "07:00", "GOOD", user.getId());
 
         LocalTime goToBedTime = LocalTime.of(Integer.parseInt(request.getGoToBedTime().substring(0, 2)), Integer.parseInt(request.getGoToBedTime().substring(3, 5)));
         LocalTime wakeUpTime = LocalTime.of(Integer.parseInt(request.getWakeUpTime().substring(0, 2)), Integer.parseInt(request.getWakeUpTime().substring(3, 5)));
 
-        SleepLogDTO sleepLogDTO = new SleepLogDTO(LocalDate.now(), goToBedTime, wakeUpTime, Duration.parse("PT8H30M"), MorningMood.GOOD);
+        SleepLogDTO sleepLogDTO = new SleepLogDTO(LocalDate.parse("2025-05-10"), goToBedTime, wakeUpTime, Duration.parse("PT8H30M"), MorningMood.GOOD);
 
         when(getUser.getById(request.getUserId())).thenReturn(user);
         doNothing().when(sleepLogRepository).save(any(SleepLog.class));
-        when(getSleepLog.getLastNight(user.getId())).thenReturn(sleepLogDTO);
+        when(getSleepLog.getByDate(user.getId(), sleepDate)).thenReturn(sleepLogDTO);
 
         SleepLogDTO createdSleepLogDTO = createSleepLog.create(request);
 
         verify(getUser).getById(request.getUserId());
         verify(sleepLogRepository).save(any(SleepLog.class));
-        verify(getSleepLog).getLastNight(user.getId());
+        verify(getSleepLog).getByDate(user.getId(), sleepDate);
         verifyNoMoreInteractions(getUser, sleepLogRepository, getSleepLog);
 
         assertEquals(sleepLogDTO, createdSleepLogDTO);
@@ -92,7 +94,7 @@ class CreateSleepLogTest {
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertNotNull(e);
-            assertEquals("Failed to obtain time from fields goToBedTime and wakeUpTime", e.getMessage());
+            assertEquals("Field goToBedTime must be in the format HH:MM", e.getMessage());
         }
     }
 
@@ -131,7 +133,7 @@ class CreateSleepLogTest {
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertNotNull(e);
-            assertEquals("Failed to obtain time from fields goToBedTime and wakeUpTime", e.getMessage());
+            assertEquals("Field wakeUpTime must be in the format HH:MM", e.getMessage());
         }
     }
 
@@ -176,7 +178,7 @@ class CreateSleepLogTest {
 
     @Test
     public void createNullUser() {
-        CreateSleepLogRequest request = new CreateSleepLogRequest("22:30", "07:00", "BAD", 0);
+        CreateSleepLogRequest request = new CreateSleepLogRequest("22:30", "07:00", "BAD", null);
 
         try {
             createSleepLog.create(request);
