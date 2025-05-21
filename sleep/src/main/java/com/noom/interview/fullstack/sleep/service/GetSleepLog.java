@@ -39,6 +39,10 @@ public class GetSleepLog {
 
         Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDate(userId, oneMonthAgo, today);
 
+        if (sleepLogs.isEmpty()) {
+            return generateEmptyAverages(oneMonthAgo, today);
+        }
+
         SleepLogMonthAverageDTO sleepLogMonthAverageDTO = new SleepLogMonthAverageDTO();
         sleepLogMonthAverageDTO.setInitialDate(oneMonthAgo);
         sleepLogMonthAverageDTO.setFinalDate(today);
@@ -48,6 +52,16 @@ public class GetSleepLog {
         sleepLogMonthAverageDTO.setMorningMoodFrequency(generateMorningMoodFrequency(sleepLogs));
 
         return sleepLogMonthAverageDTO;
+    }
+
+    private SleepLogMonthAverageDTO generateEmptyAverages(LocalDate oneMonthAgo, LocalDate today) {
+        Map<MorningMood, Integer> frequencies = new HashMap<>();
+
+        for (MorningMood morningMood : MorningMood.values()) {
+            frequencies.put(morningMood, 0);
+        }
+
+        return new SleepLogMonthAverageDTO(oneMonthAgo, today, null, null, null, frequencies);
     }
 
     private Map<MorningMood, Integer> generateMorningMoodFrequency(Set<SleepLog> sleepLogs) {
@@ -97,7 +111,9 @@ public class GetSleepLog {
 
         int averageMinutes = minutes / times.size();
 
-        return LocalTime.of(averageMinutes / 60, averageMinutes % 60);
+        int averageHour = averageMinutes / 60;
+
+        return LocalTime.of(averageHour >= 24 ? averageHour - 24 : averageHour, averageMinutes % 60);
     }
 
     private LocalTime calculateWakeUpTimeAverage(Set<SleepLog> sleepLogs) {

@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -66,7 +67,7 @@ class GetSleepLogTest {
     }
 
     @Test
-    public void getLastMonthAveragesHappyFlowTest() {
+    public void getLastMonthAveragesHappyFlowScenario1Test() {
         LocalDate today = LocalDate.now();
         LocalDate oneMonthAgo = today.minusDays(30);
 
@@ -93,6 +94,63 @@ class GetSleepLogTest {
         assertEquals(LocalTime.of(23, 30), sleepLogMonthAverageDTO.getGoToBedTimeAverage());
         assertEquals(LocalTime.of(8, 0), sleepLogMonthAverageDTO.getWakeUpTimeAverage());
         assertEquals(Duration.parse("PT8H30M"), sleepLogMonthAverageDTO.getTotalTimeInBedAverage());
+        assertEquals(morningMoods, sleepLogMonthAverageDTO.getMorningMoodFrequency());
+    }
+
+    @Test
+    public void getLastMonthAveragesHappyFlowScenario2Test() {
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthAgo = today.minusDays(30);
+
+        SleepLog sleepLog1 = SleepLogFactory.getSleepLog1(LocalTime.of(23, 59), LocalTime.of(4, 59));
+        SleepLog sleepLog2 = SleepLogFactory.getSleepLog2(LocalTime.of(0, 2), LocalTime.of(5, 1));
+        SleepLog sleepLog3 = SleepLogFactory.getSleepLog3(LocalTime.of(0, 3), LocalTime.of(5, 1));
+
+        Map<MorningMood, Integer> morningMoods = new HashMap<>();
+        morningMoods.put(MorningMood.GOOD, 2);
+        morningMoods.put(MorningMood.BAD, 1);
+        morningMoods.put(MorningMood.OK, 0);
+
+        when(sleepLogRepository.getAllByDate(sleepLog1.getUser().getId(), oneMonthAgo, today))
+                .thenReturn(Set.of(sleepLog1, sleepLog2, sleepLog3));
+
+        SleepLogMonthAverageDTO sleepLogMonthAverageDTO = getSleepLog.getLastMonthAverages(sleepLog2.getUser().getId());
+
+        verify(sleepLogRepository).getAllByDate(sleepLog1.getUser().getId(), oneMonthAgo, today);
+        verifyNoMoreInteractions(sleepLogRepository);
+
+        assertEquals(oneMonthAgo, sleepLogMonthAverageDTO.getInitialDate());
+        assertEquals(today, sleepLogMonthAverageDTO.getFinalDate());
+        assertEquals(LocalTime.of(0, 1), sleepLogMonthAverageDTO.getGoToBedTimeAverage());
+        assertEquals(LocalTime.of(5, 0), sleepLogMonthAverageDTO.getWakeUpTimeAverage());
+        assertEquals(Duration.parse("PT4H59M"), sleepLogMonthAverageDTO.getTotalTimeInBedAverage());
+        assertEquals(morningMoods, sleepLogMonthAverageDTO.getMorningMoodFrequency());
+    }
+
+    @Test
+    public void getLastMonthAveragesEmptySleepLogListTest() {
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthAgo = today.minusDays(30);
+        int userId = 1;
+
+        Map<MorningMood, Integer> morningMoods = new HashMap<>();
+        morningMoods.put(MorningMood.GOOD, 0);
+        morningMoods.put(MorningMood.BAD, 0);
+        morningMoods.put(MorningMood.OK, 0);
+
+        when(sleepLogRepository.getAllByDate(userId, oneMonthAgo, today))
+                .thenReturn(Collections.emptySet());
+
+        SleepLogMonthAverageDTO sleepLogMonthAverageDTO = getSleepLog.getLastMonthAverages(userId);
+
+        verify(sleepLogRepository).getAllByDate(userId, oneMonthAgo, today);
+        verifyNoMoreInteractions(sleepLogRepository);
+
+        assertEquals(oneMonthAgo, sleepLogMonthAverageDTO.getInitialDate());
+        assertEquals(today, sleepLogMonthAverageDTO.getFinalDate());
+        assertNull(sleepLogMonthAverageDTO.getGoToBedTimeAverage());
+        assertNull(sleepLogMonthAverageDTO.getWakeUpTimeAverage());
+        assertNull(sleepLogMonthAverageDTO.getTotalTimeInBedAverage());
         assertEquals(morningMoods, sleepLogMonthAverageDTO.getMorningMoodFrequency());
     }
 }

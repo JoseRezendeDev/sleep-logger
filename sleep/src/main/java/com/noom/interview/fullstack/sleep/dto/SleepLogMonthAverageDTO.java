@@ -15,6 +15,18 @@ public class SleepLogMonthAverageDTO {
     private Duration totalTimeInBedAverage;
     private Map<MorningMood, Integer> morningMoodFrequency;
 
+    public SleepLogMonthAverageDTO() {
+    }
+
+    public SleepLogMonthAverageDTO(LocalDate initialDate, LocalDate finalDate, LocalTime goToBedTimeAverage, LocalTime wakeUpTimeAverage, Duration totalTimeInBedAverage, Map<MorningMood, Integer> morningMoodFrequency) {
+        this.initialDate = initialDate;
+        this.finalDate = finalDate;
+        this.goToBedTimeAverage = goToBedTimeAverage;
+        this.wakeUpTimeAverage = wakeUpTimeAverage;
+        this.totalTimeInBedAverage = totalTimeInBedAverage;
+        this.morningMoodFrequency = morningMoodFrequency;
+    }
+
     public LocalDate getInitialDate() {
         return initialDate;
     }
