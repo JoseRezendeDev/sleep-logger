@@ -9,7 +9,6 @@ import com.noom.interview.fullstack.sleep.model.User;
 import com.noom.interview.fullstack.sleep.service.adapter.SleepLogRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -55,7 +54,6 @@ public class CreateSleepLog {
     }
 
     private void validateRequest(CreateSleepLogRequest request) {
-        // TODO Implement Controller Advice and Exception Handler
         if (Objects.isNull(request)) {
             throw new IllegalArgumentException("Sleep Log data is missing on body request");
         }
@@ -74,7 +72,7 @@ public class CreateSleepLog {
             throw new IllegalArgumentException("Field morningMood must be one of these: " + Arrays.toString(MorningMood.values()));
         }
 
-        if (request.getUserId() == 0) {
+        if (Objects.isNull(request.getUserId())) {
             throw new IllegalArgumentException("Field userId is missing");
         }
     }

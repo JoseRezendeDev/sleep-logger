@@ -2,10 +2,13 @@ package com.noom.interview.fullstack.sleep.service;
 
 import com.noom.interview.fullstack.sleep.dto.SleepLogDTO;
 import com.noom.interview.fullstack.sleep.dto.SleepLogMonthAverageDTO;
+import com.noom.interview.fullstack.sleep.exception.SleepLogNotFoundException;
 import com.noom.interview.fullstack.sleep.mapper.SleepLogMapper;
 import com.noom.interview.fullstack.sleep.model.MorningMood;
 import com.noom.interview.fullstack.sleep.model.SleepLog;
+import com.noom.interview.fullstack.sleep.model.User;
 import com.noom.interview.fullstack.sleep.service.adapter.SleepLogRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -18,17 +21,21 @@ import java.util.stream.Collectors;
 public class GetSleepLog {
 
     private final SleepLogRepository sleepLogRepository;
+    private final GetUser getUser;
 
-    public GetSleepLog(SleepLogRepository sleepLogRepository) {
+    public GetSleepLog(SleepLogRepository sleepLogRepository, GetUser getUser) {
         this.sleepLogRepository = sleepLogRepository;
+        this.getUser = getUser;
     }
 
     public SleepLogDTO getLastNight(int userId) {
         validateRequest(userId);
 
-        SleepLog sleepLog = sleepLogRepository.getLastNight(userId);
-
-        return SleepLogMapper.toDTO(sleepLog);
+        try {
+            return SleepLogMapper.toDTO(sleepLogRepository.getLastNight(userId));
+        } catch (EmptyResultDataAccessException e) {
+            throw new SleepLogNotFoundException("Cannot find last night sleep log for user ID " + userId);
+        }
     }
 
     public SleepLogMonthAverageDTO getLastMonthAverages(int userId) {
@@ -37,7 +44,9 @@ public class GetSleepLog {
         LocalDate today = LocalDate.now();
         LocalDate oneMonthAgo = today.minusDays(30);
 
-        Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDate(userId, oneMonthAgo, today);
+        User user = getUser.getById(userId);
+
+        Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDate(user.getId(), oneMonthAgo, today);
 
         if (sleepLogs.isEmpty()) {
             return generateEmptyAverages(oneMonthAgo, today);

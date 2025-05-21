@@ -1,0 +1,41 @@
+package com.noom.interview.fullstack.sleep.controller;
+
+import com.noom.interview.fullstack.sleep.dto.CreateSleepLogRequest;
+import com.noom.interview.fullstack.sleep.dto.SleepLogDTO;
+import com.noom.interview.fullstack.sleep.dto.SleepLogMonthAverageDTO;
+import com.noom.interview.fullstack.sleep.service.CreateSleepLog;
+import com.noom.interview.fullstack.sleep.service.GetSleepLog;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("sleep-log")
+public class SleepLogController {
+
+    private final CreateSleepLog createSleepLog;
+    private final GetSleepLog getSleepLog;
+
+    public SleepLogController(CreateSleepLog createSleepLog, GetSleepLog getSleepLog) {
+        this.createSleepLog = createSleepLog;
+        this.getSleepLog = getSleepLog;
+    }
+
+    @PostMapping
+    public ResponseEntity<SleepLogDTO> create(@RequestBody CreateSleepLogRequest createSleepLogRequest) {
+        SleepLogDTO sleepLogDTO = createSleepLog.create(createSleepLogRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(sleepLogDTO);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<SleepLogDTO> getLastNight(@PathVariable int userId) {
+        SleepLogDTO sleepLogDTO = getSleepLog.getLastNight(userId);
+        return ResponseEntity.ok(sleepLogDTO);
+    }
+
+    @GetMapping("/month-averages/{userId}")
+    public ResponseEntity<SleepLogMonthAverageDTO> getLastMonthAverages(@PathVariable int userId) {
+        SleepLogMonthAverageDTO monthAverageDTO = getSleepLog.getLastMonthAverages(userId);
+        return ResponseEntity.ok(monthAverageDTO);
+    }
+}
