@@ -13,6 +13,6 @@ public class GetUser {
     }
 
     public User getById(int id) {
-        return userRepository.findById(id);
+        return userRepository.getById(id);
     }
 }
