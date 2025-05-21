@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -31,18 +32,13 @@ public class CreateSleepLog {
     public SleepLogDTO create(CreateSleepLogRequest request) {
         validateRequest(request);
 
-        LocalTime goToBedTime;
-        LocalTime wakeUpTime;
-        try {
-            goToBedTime = LocalTime.of(Integer.parseInt(request.getGoToBedTime().substring(0, 2)), Integer.parseInt(request.getGoToBedTime().substring(3, 5)));
-            wakeUpTime = LocalTime.of(Integer.parseInt(request.getWakeUpTime().substring(0, 2)), Integer.parseInt(request.getWakeUpTime().substring(3, 5)));
-        } catch (DateTimeException | NumberFormatException e) {
-            throw new IllegalArgumentException("Failed to obtain time from fields goToBedTime and wakeUpTime");
-        }
+        LocalDate sleepDate = getSleepDate(request);
+        LocalTime goToBedTime = getGoToBedTime(request);
+        LocalTime wakeUpTime = getWakeUpTime(request);
 
         User user = getUser.getById(request.getUserId());
 
-        SleepLog sleepLog = new SleepLog(LocalDate.now(), goToBedTime, wakeUpTime, MorningMood.valueOf(request.getMorningMood()), user);
+        SleepLog sleepLog = new SleepLog(sleepDate, goToBedTime, wakeUpTime, MorningMood.valueOf(request.getMorningMood()), user);
 
         try {
             sleepLogRepository.save(sleepLog);
@@ -50,12 +46,45 @@ public class CreateSleepLog {
             throw new SleepDateAlreadyExistsException("There is already a sleep log for this date: " + sleepLog.getSleepDate());
         }
 
-        return getSleepLog.getLastNight(user.getId());
+        return getSleepLog.getByDate(user.getId(), sleepDate);
+    }
+
+    private LocalTime getGoToBedTime(CreateSleepLogRequest request) {
+        try {
+            return LocalTime.of(Integer.parseInt(request.getGoToBedTime().substring(0, 2)), Integer.parseInt(request.getGoToBedTime().substring(3, 5)));
+        } catch (DateTimeException | NumberFormatException e) {
+            throw new IllegalArgumentException("Field goToBedTime must be in the format HH:MM");
+        }
+    }
+
+    private LocalTime getWakeUpTime(CreateSleepLogRequest request) {
+        try {
+            return LocalTime.of(Integer.parseInt(request.getWakeUpTime().substring(0, 2)), Integer.parseInt(request.getWakeUpTime().substring(3, 5)));
+        } catch (DateTimeException | NumberFormatException e) {
+            throw new IllegalArgumentException("Field wakeUpTime must be in the format HH:MM");
+        }
+    }
+
+    private LocalDate getSleepDate(CreateSleepLogRequest request) {
+        if (Objects.isNull(request.getSleepDate())) {
+            return LocalDate.now();
+        }
+
+        try {
+            return LocalDate.parse(request.getSleepDate());
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Field sleepDate must be in the format YYYY-MM-DD");
+        }
     }
 
     private void validateRequest(CreateSleepLogRequest request) {
         if (Objects.isNull(request)) {
             throw new IllegalArgumentException("Sleep Log data is missing on body request");
+        }
+
+        // Optional field
+        if (Objects.nonNull(request.getSleepDate()) && request.getSleepDate().length() != 10) {
+            throw new IllegalArgumentException("Field sleepDate must be in the format YYYY-MM-DD");
         }
 
         if (Objects.isNull(request.getGoToBedTime()) || request.getGoToBedTime().length() != 5) {

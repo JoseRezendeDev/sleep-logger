@@ -43,11 +43,11 @@ public class SleepLogRepositoryImpl implements SleepLogRepository {
     }
 
     @Override
-    public SleepLog getLastNight(int userId) {
+    public SleepLog getByDate(int userId, LocalDate date) {
         String sql = "SELECT * FROM sleep_log WHERE sleep_date = :sleepDate and user_id = :userId";
 
         Map<String, Object> params = new HashMap<>();
-        params.put("sleepDate", LocalDate.now());
+        params.put("sleepDate", date);
         params.put("userId", userId);
 
         return jdbcTemplate.queryForObject(sql, params, new SleepLogRowMapper());

@@ -7,7 +7,7 @@ import java.util.Set;
 public interface SleepLogRepository {
     void save(SleepLog sleepLog);
 
-    SleepLog getLastNight(int userId);
+    SleepLog getByDate(int userId, LocalDate date);
 
     Set<SleepLog> getAllByDate(int userId, LocalDate initialDate, LocalDate finalDate);
 }

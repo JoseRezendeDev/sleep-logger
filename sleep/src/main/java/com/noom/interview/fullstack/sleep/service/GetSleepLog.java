@@ -29,10 +29,14 @@ public class GetSleepLog {
     }
 
     public SleepLogDTO getLastNight(int userId) {
+        return getByDate(userId, LocalDate.now());
+    }
+
+    public SleepLogDTO getByDate(int userId, LocalDate date) {
         validateRequest(userId);
 
         try {
-            return SleepLogMapper.toDTO(sleepLogRepository.getLastNight(userId));
+            return SleepLogMapper.toDTO(sleepLogRepository.getByDate(userId, date));
         } catch (EmptyResultDataAccessException e) {
             throw new SleepLogNotFoundException("Cannot find last night sleep log for user ID " + userId);
         }

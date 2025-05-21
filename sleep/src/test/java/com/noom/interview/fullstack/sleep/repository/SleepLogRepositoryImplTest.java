@@ -54,7 +54,7 @@ class SleepLogRepositoryImplTest {
 
         sleepLogRepository.save(sleepLog);
 
-        SleepLog createdSleepLog = sleepLogRepository.getLastNight(sleepLog.getUser().getId());
+        SleepLog createdSleepLog = sleepLogRepository.getByDate(sleepLog.getUser().getId(), LocalDate.now());
 
         createdSleepLog.setUser(sleepLog.getUser());
 
