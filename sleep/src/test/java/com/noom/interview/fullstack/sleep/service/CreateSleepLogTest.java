@@ -3,33 +3,61 @@ package com.noom.interview.fullstack.sleep.service;
 import com.noom.interview.fullstack.sleep.dto.CreateSleepLogRequest;
 import com.noom.interview.fullstack.sleep.dto.SleepLogDTO;
 import com.noom.interview.fullstack.sleep.model.MorningMood;
+import com.noom.interview.fullstack.sleep.model.SleepLog;
+import com.noom.interview.fullstack.sleep.model.User;
+import com.noom.interview.fullstack.sleep.service.adapter.SleepLogRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class CreateSleepLogTest {
 
-    @Autowired
+    @Mock
+    private SleepLogRepository sleepLogRepository;
+
+    @Mock
+    private GetSleepLog getSleepLog;
+
+    @Mock
+    private GetUser getUser;
+
+    @InjectMocks
     private CreateSleepLog createSleepLog;
 
     @Test
     public void createHappyFlow() {
-        CreateSleepLogRequest request = new CreateSleepLogRequest("22:30", "07:00", "GOOD", 1);
+        User user = new User(1, "Jose Rezende");
+
+        CreateSleepLogRequest request = new CreateSleepLogRequest("22:30", "07:00", "GOOD", user.getId());
 
         LocalTime goToBedTime = LocalTime.of(Integer.parseInt(request.getGoToBedTime().substring(0, 2)), Integer.parseInt(request.getGoToBedTime().substring(3, 5)));
         LocalTime wakeUpTime = LocalTime.of(Integer.parseInt(request.getWakeUpTime().substring(0, 2)), Integer.parseInt(request.getWakeUpTime().substring(3, 5)));
 
-        SleepLogDTO sleepLogDTO = createSleepLog.create(request);
+        SleepLogDTO sleepLogDTO = new SleepLogDTO(LocalDate.now(), goToBedTime, wakeUpTime, Duration.parse("PT8H30M"), MorningMood.GOOD);
 
-        assertEquals(goToBedTime, sleepLogDTO.getGoToBedTime());
-        assertEquals(wakeUpTime, sleepLogDTO.getWakeUpTime());
-        assertEquals(MorningMood.valueOf(request.getMorningMood()), sleepLogDTO.getMorningMood());
+        when(getUser.getById(request.getUserId())).thenReturn(user);
+        doNothing().when(sleepLogRepository).save(any(SleepLog.class));
+        when(getSleepLog.getLastNight(user.getId())).thenReturn(sleepLogDTO);
+
+        SleepLogDTO createdSleepLogDTO = createSleepLog.create(request);
+
+        verify(getUser).getById(request.getUserId());
+        verify(sleepLogRepository).save(any(SleepLog.class));
+        verify(getSleepLog).getLastNight(user.getId());
+        verifyNoMoreInteractions(getUser, sleepLogRepository, getSleepLog);
+
+        assertEquals(sleepLogDTO, createdSleepLogDTO);
     }
 
     @Test

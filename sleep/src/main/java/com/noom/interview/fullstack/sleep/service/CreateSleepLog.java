@@ -2,14 +2,16 @@ package com.noom.interview.fullstack.sleep.service;
 
 import com.noom.interview.fullstack.sleep.dto.CreateSleepLogRequest;
 import com.noom.interview.fullstack.sleep.dto.SleepLogDTO;
-import com.noom.interview.fullstack.sleep.mapper.SleepLogMapper;
+import com.noom.interview.fullstack.sleep.exception.SleepDateAlreadyExistsException;
 import com.noom.interview.fullstack.sleep.model.MorningMood;
 import com.noom.interview.fullstack.sleep.model.SleepLog;
 import com.noom.interview.fullstack.sleep.model.User;
 import com.noom.interview.fullstack.sleep.service.adapter.SleepLogRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Objects;
@@ -18,10 +20,12 @@ import java.util.Objects;
 public class CreateSleepLog {
 
     private final SleepLogRepository sleepLogRepository;
+    private final GetSleepLog getSleepLog;
     private final GetUser getUser;
 
-    public CreateSleepLog(SleepLogRepository sleepLogRepository, GetUser getUser) {
+    public CreateSleepLog(SleepLogRepository sleepLogRepository, GetSleepLog getSleepLog, GetUser getUser) {
         this.sleepLogRepository = sleepLogRepository;
+        this.getSleepLog = getSleepLog;
         this.getUser = getUser;
     }
 
@@ -39,11 +43,15 @@ public class CreateSleepLog {
 
         User user = getUser.getById(request.getUserId());
 
-        SleepLog sleepLog = new SleepLog(goToBedTime, wakeUpTime, MorningMood.valueOf(request.getMorningMood()), user);
+        SleepLog sleepLog = new SleepLog(LocalDate.now(), goToBedTime, wakeUpTime, MorningMood.valueOf(request.getMorningMood()), user);
 
-        SleepLog createdSleepLog = sleepLogRepository.save(sleepLog);
+        try {
+            sleepLogRepository.save(sleepLog);
+        } catch (DuplicateKeyException e) {
+            throw new SleepDateAlreadyExistsException("There is already a sleep log for this date: " + sleepLog.getSleepDate());
+        }
 
-        return SleepLogMapper.toDTO(createdSleepLog);
+        return getSleepLog.getLastNight(user.getId());
     }
 
     private void validateRequest(CreateSleepLogRequest request) {
