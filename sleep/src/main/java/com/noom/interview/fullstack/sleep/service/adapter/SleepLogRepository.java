@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public interface SleepLogRepository {
-    SleepLog save(SleepLog sleepLog);
+    void save(SleepLog sleepLog);
 
     SleepLog getLastNight(int userId);
 

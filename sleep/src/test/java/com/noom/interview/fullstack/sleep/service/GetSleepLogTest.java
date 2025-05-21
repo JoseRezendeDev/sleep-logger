@@ -42,7 +42,7 @@ class GetSleepLogTest {
         MorningMood morningMood = MorningMood.GOOD;
 
         when(sleepLogRepository.getLastNight(userId))
-                .thenReturn(new SleepLog(goToBedTime, wakeUpTime, morningMood, new User(1, "Jose")));
+                .thenReturn(new SleepLog(LocalDate.now(), goToBedTime, wakeUpTime, morningMood, new User(1, "Jose")));
 
         SleepLogDTO sleepLogDTO = getSleepLog.getLastNight(1);
 

@@ -5,6 +5,7 @@ import com.noom.interview.fullstack.sleep.model.MorningMood;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class SleepLogDTO {
     private final LocalDate sleepDate;
@@ -39,5 +40,17 @@ public class SleepLogDTO {
 
     public MorningMood getMorningMood() {
         return morningMood;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        SleepLogDTO that = (SleepLogDTO) o;
+        return Objects.equals(sleepDate, that.sleepDate) && Objects.equals(goToBedTime, that.goToBedTime) && Objects.equals(wakeUpTime, that.wakeUpTime) && Objects.equals(totalTimeInBed, that.totalTimeInBed) && morningMood == that.morningMood;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sleepDate, goToBedTime, wakeUpTime, totalTimeInBed, morningMood);
     }
 }

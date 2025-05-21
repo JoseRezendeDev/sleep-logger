@@ -12,9 +12,9 @@ public class SleepLog {
     private final LocalTime wakeUpTime;
     private final Duration totalTimeInBed;
     private final MorningMood morningMood;
-    private final User user;
+    private User user;
 
-    public SleepLog(LocalTime goToBedTime, LocalTime wakeUpTime, MorningMood morningMood, User user) {
+    public SleepLog(LocalDate sleepDate, LocalTime goToBedTime, LocalTime wakeUpTime, MorningMood morningMood, User user) {
         if (Objects.isNull(user)) {
             throw new IllegalArgumentException("Cannot create a Sleep Log without a user");
         }
@@ -22,7 +22,7 @@ public class SleepLog {
         this.goToBedTime = goToBedTime;
         this.wakeUpTime = wakeUpTime;
         this.morningMood = morningMood;
-        this.sleepDate = LocalDate.now();
+        this.sleepDate = sleepDate;
         this.user = user;
 
         // This checks if the user slept before or after MIDNIGHT
@@ -33,6 +33,23 @@ public class SleepLog {
         } else {
             this.totalTimeInBed = Duration.between(goToBedTime, wakeUpTime).abs();
         }
+    }
+
+    public SleepLog(LocalDate sleepDate, LocalTime goToBedTime, LocalTime wakeUpTime, Duration totalTimeInBed, MorningMood morningMood, User user) {
+        this.sleepDate = sleepDate;
+        this.goToBedTime = goToBedTime;
+        this.wakeUpTime = wakeUpTime;
+        this.totalTimeInBed = totalTimeInBed;
+        this.morningMood = morningMood;
+        this.user = user;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public LocalDate getSleepDate() {
@@ -57,6 +74,10 @@ public class SleepLog {
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

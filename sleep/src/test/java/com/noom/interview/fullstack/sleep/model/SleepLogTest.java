@@ -18,7 +18,7 @@ class SleepLogTest {
         LocalTime goToBedTime = LocalTime.of(22, 30);
         LocalTime wakeUpTime = LocalTime.of(7, 0);
 
-        SleepLog sleepLog = new SleepLog(goToBedTime, wakeUpTime, MorningMood.GOOD, user);
+        SleepLog sleepLog = new SleepLog(LocalDate.now(), goToBedTime, wakeUpTime, MorningMood.GOOD, user);
 
         assertEquals(goToBedTime, sleepLog.getGoToBedTime());
         assertEquals(wakeUpTime, sleepLog.getWakeUpTime());
@@ -34,7 +34,7 @@ class SleepLogTest {
         LocalTime goToBedTime = LocalTime.of(1, 0);
         LocalTime wakeUpTime = LocalTime.of(10, 40);
 
-        SleepLog sleepLog = new SleepLog(goToBedTime, wakeUpTime, MorningMood.GOOD, user);
+        SleepLog sleepLog = new SleepLog(LocalDate.now(), goToBedTime, wakeUpTime, MorningMood.GOOD, user);
 
         assertEquals(goToBedTime, sleepLog.getGoToBedTime());
         assertEquals(wakeUpTime, sleepLog.getWakeUpTime());
@@ -50,7 +50,7 @@ class SleepLogTest {
         LocalTime wakeUpTime = LocalTime.of(10, 40);
 
         try {
-            new SleepLog(goToBedTime, wakeUpTime, MorningMood.GOOD, null);
+            new SleepLog(LocalDate.now(), goToBedTime, wakeUpTime, MorningMood.GOOD, null);
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertNotNull(e);
