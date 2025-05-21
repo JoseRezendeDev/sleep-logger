@@ -45,8 +45,9 @@ POST http:localhost:8080/sleep-log
 Request Body:
 
 {
-	  "goToBedTime": "22:00",
-    "wakeUpTime": "07:36",
+	"sleepDate": "2025-05-17",
+ 	"goToBedTime": "22:00",
+	"wakeUpTime": "07:36",
     "morningMood": "GOOD",
     "userId": "1"
 }
@@ -54,7 +55,7 @@ Request Body:
 Response:
 
 {
-    "sleepDate": "2025-05-21",
+    "sleepDate": "2025-05-17",
     "goToBedTime": "22:00:00",
     "wakeUpTime": "07:36:00",
     "totalTimeInBed": "PT9H36M",
