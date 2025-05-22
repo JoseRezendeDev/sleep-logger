@@ -28,8 +28,8 @@ public class SleepLogController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<SleepLogDTO> getLastNight(@PathVariable int userId) {
-        SleepLogDTO sleepLogDTO = getSleepLog.getLastNight(userId);
+    public ResponseEntity<SleepLogDTO> getByDate(@PathVariable int userId, @RequestParam(required = false) String date) {
+        SleepLogDTO sleepLogDTO = getSleepLog.getByDateFromRequest(userId, date);
         return ResponseEntity.ok(sleepLogDTO);
     }
 

@@ -54,7 +54,7 @@ public class SleepLogRepositoryImpl implements SleepLogRepository {
     }
 
     @Override
-    public Set<SleepLog> getAllByDate(int userId, LocalDate initialDate, LocalDate finalDate) {
+    public Set<SleepLog> getAllByDateRange(int userId, LocalDate initialDate, LocalDate finalDate) {
         String sql = "SELECT * FROM sleep_log WHERE sleep_date >= :initialDate " +
                 "and sleep_date <= :finalDate " +
                 "and user_id = :userId " +

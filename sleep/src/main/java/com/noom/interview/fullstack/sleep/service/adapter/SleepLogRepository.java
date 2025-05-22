@@ -9,5 +9,5 @@ public interface SleepLogRepository {
 
     SleepLog getByDate(int userId, LocalDate date);
 
-    Set<SleepLog> getAllByDate(int userId, LocalDate initialDate, LocalDate finalDate);
+    Set<SleepLog> getAllByDateRange(int userId, LocalDate initialDate, LocalDate finalDate);
 }

@@ -10,10 +10,12 @@ import com.noom.interview.fullstack.sleep.model.User;
 import com.noom.interview.fullstack.sleep.service.adapter.SleepLogRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,20 +30,44 @@ public class GetSleepLog {
         this.getUser = getUser;
     }
 
-    public SleepLogDTO getLastNight(int userId) {
-        return getByDate(userId, LocalDate.now());
+    public SleepLogDTO getByDateFromRequest(int userId, String date) {
+        return getByDate(userId, getDate(date));
     }
 
+    /**
+     * MAIN METHOD TO GET A SINGLE SLEEP LOG
+     */
     public SleepLogDTO getByDate(int userId, LocalDate date) {
         validateRequest(userId);
 
         try {
             return SleepLogMapper.toDTO(sleepLogRepository.getByDate(userId, date));
         } catch (EmptyResultDataAccessException e) {
-            throw new SleepLogNotFoundException("Cannot find last night sleep log for user ID " + userId);
+            throw new SleepLogNotFoundException("Cannot find sleep log for user ID " + userId + " and date " + date);
         }
     }
 
+    private LocalDate getDate(String dateString) {
+        if (!StringUtils.hasText(dateString)) {
+            return LocalDate.now();
+        }
+
+        try {
+            return LocalDate.parse(dateString);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Query param 'date' must be in the format YYYY-MM-DD");
+        }
+    }
+
+    private void validateRequest(int userId) {
+        if (userId == 0) {
+            throw new IllegalArgumentException("Field userId is missing");
+        }
+    }
+
+    /**
+     * MAIN METHOD TO GET MONTH AVERAGES
+     */
     public SleepLogMonthAverageDTO getLastMonthAverages(int userId) {
         validateRequest(userId);
 
@@ -50,7 +76,7 @@ public class GetSleepLog {
 
         User user = getUser.getById(userId);
 
-        Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDate(user.getId(), oneMonthAgo, today);
+        Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDateRange(user.getId(), oneMonthAgo, today);
 
         if (sleepLogs.isEmpty()) {
             return generateEmptyAverages(oneMonthAgo, today);
@@ -143,11 +169,5 @@ public class GetSleepLog {
         int averageMinutes = minutes / times.size();
 
         return LocalTime.of(averageMinutes / 60, averageMinutes % 60);
-    }
-
-    private void validateRequest(int userId) {
-        if (userId == 0) {
-            throw new IllegalArgumentException("Field userId is missing");
-        }
     }
 }
