@@ -35,6 +35,11 @@ public class SleepLog {
         }
     }
 
+    /**
+     * DO NOT USE THIS CONSTRUCTOR. IT IS USED ONLY FOR DATABASE MAPPING.
+     * IF YOU USE IT, IT MAY LEAD TO INCONSISTENCIES AMONG FIELDS GO TO BE TIME, WAKE UP TIME
+     * AND TOTAL TIME IN BED
+     */
     public SleepLog(LocalDate sleepDate, LocalTime goToBedTime, LocalTime wakeUpTime, Duration totalTimeInBed, MorningMood morningMood, User user) {
         this.sleepDate = sleepDate;
         this.goToBedTime = goToBedTime;
@@ -42,14 +47,6 @@ public class SleepLog {
         this.totalTimeInBed = totalTimeInBed;
         this.morningMood = morningMood;
         this.user = user;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public LocalDate getSleepDate() {

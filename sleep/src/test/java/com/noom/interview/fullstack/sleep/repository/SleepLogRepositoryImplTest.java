@@ -13,8 +13,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,6 +77,21 @@ class SleepLogRepositoryImplTest {
         LocalDate oneMonthAgo = today.minusDays(30);
 
         Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDateRange(sleepLog1.getUser().getId(), oneMonthAgo, today);
+
+        Optional<SleepLog> lastNight = sleepLogs.stream()
+                .filter(sleepLog -> LocalDate.now().equals(sleepLog.getSleepDate()))
+                .findFirst();
+
+        if (lastNight.isEmpty()) {
+            fail("Should have found sleep log");
+        }
+
+        assertEquals(sleepLog1.getSleepDate(), lastNight.get().getSleepDate());
+        assertEquals(sleepLog1.getGoToBedTime(), lastNight.get().getGoToBedTime());
+        assertEquals(sleepLog1.getWakeUpTime(), lastNight.get().getWakeUpTime());
+        assertEquals(sleepLog1.getTotalTimeInBed(), lastNight.get().getTotalTimeInBed());
+        assertEquals(sleepLog1.getMorningMood(), lastNight.get().getMorningMood());
+        assertEquals(sleepLog1.getUser().getId(), lastNight.get().getUser().getId());
 
         assertEquals(3, sleepLogs.size());
     }

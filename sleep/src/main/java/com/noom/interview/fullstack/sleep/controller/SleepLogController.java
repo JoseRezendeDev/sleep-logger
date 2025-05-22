@@ -4,6 +4,7 @@ import com.noom.interview.fullstack.sleep.dto.CreateSleepLogRequest;
 import com.noom.interview.fullstack.sleep.dto.SleepLogDTO;
 import com.noom.interview.fullstack.sleep.dto.SleepLogMonthAverageDTO;
 import com.noom.interview.fullstack.sleep.service.CreateSleepLog;
+import com.noom.interview.fullstack.sleep.service.GetMonthAverages;
 import com.noom.interview.fullstack.sleep.service.GetSleepLog;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,12 @@ public class SleepLogController {
 
     private final CreateSleepLog createSleepLog;
     private final GetSleepLog getSleepLog;
+    private final GetMonthAverages getMonthAverages;
 
-    public SleepLogController(CreateSleepLog createSleepLog, GetSleepLog getSleepLog) {
+    public SleepLogController(CreateSleepLog createSleepLog, GetSleepLog getSleepLog, GetMonthAverages getMonthAverages) {
         this.createSleepLog = createSleepLog;
         this.getSleepLog = getSleepLog;
+        this.getMonthAverages = getMonthAverages;
     }
 
     @PostMapping
@@ -35,7 +38,7 @@ public class SleepLogController {
 
     @GetMapping("/month-averages/{userId}")
     public ResponseEntity<SleepLogMonthAverageDTO> getLastMonthAverages(@PathVariable int userId) {
-        SleepLogMonthAverageDTO monthAverageDTO = getSleepLog.getLastMonthAverages(userId);
+        SleepLogMonthAverageDTO monthAverageDTO = getMonthAverages.getLastMonthAverages(userId);
         return ResponseEntity.ok(monthAverageDTO);
     }
 }
