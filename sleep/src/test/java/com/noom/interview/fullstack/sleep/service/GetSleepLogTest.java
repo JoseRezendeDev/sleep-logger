@@ -47,7 +47,7 @@ class GetSleepLogTest {
         when(sleepLogRepository.getByDate(userId, LocalDate.now()))
                 .thenReturn(new SleepLog(LocalDate.now(), goToBedTime, wakeUpTime, morningMood, new User(1, "Jose")));
 
-        SleepLogDTO sleepLogDTO = getSleepLog.getLastNight(1);
+        SleepLogDTO sleepLogDTO = getSleepLog.getByDate(1, LocalDate.now());
 
         verify(sleepLogRepository).getByDate(userId, LocalDate.now());
         verifyNoMoreInteractions(sleepLogRepository);
@@ -60,7 +60,7 @@ class GetSleepLogTest {
     @Test
     public void getLastNightInvalidUserTest() {
         try {
-            getSleepLog.getLastNight(0);
+            getSleepLog.getByDate(0, LocalDate.now());
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             verifyNoInteractions(sleepLogRepository);
@@ -85,13 +85,13 @@ class GetSleepLogTest {
         morningMoods.put(MorningMood.OK, 0);
 
         when(getUser.getById(sleepLog2.getUser().getId())).thenReturn(sleepLog2.getUser());
-        when(sleepLogRepository.getAllByDate(sleepLog1.getUser().getId(), oneMonthAgo, today))
+        when(sleepLogRepository.getAllByDateRange(sleepLog1.getUser().getId(), oneMonthAgo, today))
                 .thenReturn(Set.of(sleepLog1, sleepLog2, sleepLog3, sleepLog4));
 
         SleepLogMonthAverageDTO sleepLogMonthAverageDTO = getSleepLog.getLastMonthAverages(sleepLog2.getUser().getId());
 
         verify(getUser).getById(sleepLog2.getUser().getId());
-        verify(sleepLogRepository).getAllByDate(sleepLog1.getUser().getId(), oneMonthAgo, today);
+        verify(sleepLogRepository).getAllByDateRange(sleepLog1.getUser().getId(), oneMonthAgo, today);
         verifyNoMoreInteractions(getUser, sleepLogRepository);
 
         assertEquals(oneMonthAgo, sleepLogMonthAverageDTO.getInitialDate());
@@ -117,13 +117,13 @@ class GetSleepLogTest {
         morningMoods.put(MorningMood.OK, 0);
 
         when(getUser.getById(sleepLog2.getUser().getId())).thenReturn(sleepLog2.getUser());
-        when(sleepLogRepository.getAllByDate(sleepLog1.getUser().getId(), oneMonthAgo, today))
+        when(sleepLogRepository.getAllByDateRange(sleepLog1.getUser().getId(), oneMonthAgo, today))
                 .thenReturn(Set.of(sleepLog1, sleepLog2, sleepLog3));
 
         SleepLogMonthAverageDTO sleepLogMonthAverageDTO = getSleepLog.getLastMonthAverages(sleepLog2.getUser().getId());
 
         verify(getUser).getById(sleepLog2.getUser().getId());
-        verify(sleepLogRepository).getAllByDate(sleepLog1.getUser().getId(), oneMonthAgo, today);
+        verify(sleepLogRepository).getAllByDateRange(sleepLog1.getUser().getId(), oneMonthAgo, today);
         verifyNoMoreInteractions(getUser, sleepLogRepository);
 
         assertEquals(oneMonthAgo, sleepLogMonthAverageDTO.getInitialDate());
@@ -146,13 +146,13 @@ class GetSleepLogTest {
         morningMoods.put(MorningMood.OK, 0);
 
         when(getUser.getById(userId)).thenReturn(new User(userId, "Jose"));
-        when(sleepLogRepository.getAllByDate(userId, oneMonthAgo, today))
+        when(sleepLogRepository.getAllByDateRange(userId, oneMonthAgo, today))
                 .thenReturn(Collections.emptySet());
 
         SleepLogMonthAverageDTO sleepLogMonthAverageDTO = getSleepLog.getLastMonthAverages(userId);
 
         verify(getUser).getById(userId);
-        verify(sleepLogRepository).getAllByDate(userId, oneMonthAgo, today);
+        verify(sleepLogRepository).getAllByDateRange(userId, oneMonthAgo, today);
         verifyNoMoreInteractions(getUser, sleepLogRepository);
 
         assertEquals(oneMonthAgo, sleepLogMonthAverageDTO.getInitialDate());

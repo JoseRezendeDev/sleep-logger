@@ -62,7 +62,7 @@ class SleepLogRepositoryImplTest {
     }
 
     @Test
-    public void getAllByDateTest() {
+    public void getAllByDateRangeTest() {
         SleepLog sleepLog1 = SleepLogFactory.getSleepLog1(LocalTime.of(22, 0), LocalTime.of(7, 30));
         SleepLog sleepLog2 = SleepLogFactory.getSleepLog1DayAgo(LocalTime.of(22, 15), LocalTime.of(7, 45));
         SleepLog sleepLog3 = SleepLogFactory.getSleepLog2DaysAgo(LocalTime.of(22, 30), LocalTime.of(7, 50));
@@ -74,7 +74,7 @@ class SleepLogRepositoryImplTest {
         LocalDate today = LocalDate.now();
         LocalDate oneMonthAgo = today.minusDays(30);
 
-        Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDate(sleepLog1.getUser().getId(), oneMonthAgo, today);
+        Set<SleepLog> sleepLogs = sleepLogRepository.getAllByDateRange(sleepLog1.getUser().getId(), oneMonthAgo, today);
 
         assertEquals(3, sleepLogs.size());
     }
