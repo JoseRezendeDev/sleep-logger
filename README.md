@@ -10,55 +10,56 @@ Also, it has a feature that calculates the average of the last 30 days of those 
 
 <h3>GET sleep log</h3>
 
-curl --location 'http://localhost:8080/sleep-log/{userId}'
+curl --location 'http://localhost:8080/sleep-logs/1?sleepDate=2025-05-24'
 
 Response:
 ```json
 {
-    "sleepDate": "2025-05-21",
-    "goToBedTime": "22:00:00",
-    "wakeUpTime": "07:36:00",
-    "totalTimeInBed": "PT9H36M",
+    "id": 70,
+    "sleepDate": "2025-05-24",
+    "goToBedTime": "22:55",
+    "wakeUpTime": "03:00",
+    "totalTimeInBed": "PT4H5M",
     "morningMood": "GOOD"
 }
  ```
 <h3>GET month averages</h3>
 
-curl --location 'http://localhost:8080/sleep-log/month-averages/{userId}'
+curl --location 'http://localhost:8080/sleep-logs/month-averages/1'
 
 Response:
 ```json
 {
-    "initialDate": "2025-04-21",
-    "finalDate": "2025-05-21",
-    "goToBedTimeAverage": "23:30:00",
-    "wakeUpTimeAverage": "07:32:00",
-    "totalTimeInBedAverage": "PT8H16M30S",
+    "initialDate": "2025-04-28",
+    "finalDate": "2025-05-28",
+    "goToBedTimeAverage": "23:27",
+    "wakeUpTimeAverage": "06:00",
+    "totalTimeInBedAverage": "PT6H43M40S",
     "morningMoodFrequency": {
-        "GOOD": 3,
-        "OK": 0,
-        "BAD": 1
+        "BAD": 1,
+        "GOOD": 1,
+        "OK": 3
     }
 }
  ```
 <h3>POST sleep log</h3>
 
-curl --location 'http://localhost:8080/sleep-log' \
+curl --location 'http://localhost:8080/sleep-logs' \
 --header 'Content-Type: application/json' \
 --data '{
-    "sleepDate": "2025-05-07",
+    "sleepDate": "2025-05-24",
 	"goToBedTime": "22:55",
-    "wakeUpTime": "09:00",
-    "morningMood": "OK",
+    "wakeUpTime": "03:00",
+    "morningMood": "GOOD",
     "userId": "1"
 }'
 
 Request Body:
 ```json
 {
-	"sleepDate": "2025-05-17",
-	"goToBedTime": "22:00",
-	"wakeUpTime": "07:36",
+    "sleepDate": "2025-05-24",
+	"goToBedTime": "22:55",
+    "wakeUpTime": "03:00",
     "morningMood": "GOOD",
     "userId": "1"
 }
@@ -66,10 +67,11 @@ Request Body:
 Response:
 ```json
 {
-    "sleepDate": "2025-05-17",
-    "goToBedTime": "22:00:00",
-    "wakeUpTime": "07:36:00",
-    "totalTimeInBed": "PT9H36M",
+    "id": 70,
+    "sleepDate": "2025-05-24",
+    "goToBedTime": "22:55",
+    "wakeUpTime": "03:00",
+    "totalTimeInBed": "PT4H5M",
     "morningMood": "GOOD"
 }
  ```
