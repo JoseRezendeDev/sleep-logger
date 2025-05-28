@@ -1,12 +1,10 @@
 package com.noom.interview.fullstack.sleep.model;
 
 import java.util.Objects;
-import java.util.Set;
 
 public class User {
     private int id;
     private String name;
-    private Set<SleepLog> sleepLogs;
 
     public User(int id, String name) {
         this.id = id;

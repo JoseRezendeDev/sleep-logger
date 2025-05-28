@@ -87,6 +87,7 @@ public class SleepLogRepositoryImpl implements SleepLogRepository {
 
         @Override
         public SleepLog mapRow(ResultSet rs, int rowNum) throws SQLException {
+            int id = rs.getInt("id");
             LocalDate sleepDate = rs.getDate("sleep_date").toLocalDate();
             LocalTime goToBedTime = rs.getTime("go_to_bed_time").toLocalTime();
             LocalTime wakeUpTime = rs.getTime("wake_up_time").toLocalTime();
@@ -98,7 +99,7 @@ public class SleepLogRepositoryImpl implements SleepLogRepository {
             int userId = rs.getInt("user_id");
             User user = new User(userId);
 
-            return new SleepLog(sleepDate, goToBedTime, wakeUpTime, totalTimeInBed, MorningMood.valueOf(morningMood), user);
+            return new SleepLog(id, sleepDate, goToBedTime, wakeUpTime, totalTimeInBed, MorningMood.valueOf(morningMood), user);
         }
 
         private Duration parseIntervalToDuration(String totalTimeInBedString) {

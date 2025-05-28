@@ -40,13 +40,22 @@ public class SleepLog {
      * IF YOU USE IT, IT MAY LEAD TO INCONSISTENCIES AMONG FIELDS GO TO BE TIME, WAKE UP TIME
      * AND TOTAL TIME IN BED
      */
-    public SleepLog(LocalDate sleepDate, LocalTime goToBedTime, LocalTime wakeUpTime, Duration totalTimeInBed, MorningMood morningMood, User user) {
+    public SleepLog(int id, LocalDate sleepDate, LocalTime goToBedTime, LocalTime wakeUpTime, Duration totalTimeInBed, MorningMood morningMood, User user) {
+        this.id = id;
         this.sleepDate = sleepDate;
         this.goToBedTime = goToBedTime;
         this.wakeUpTime = wakeUpTime;
         this.totalTimeInBed = totalTimeInBed;
         this.morningMood = morningMood;
         this.user = user;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public LocalDate getSleepDate() {

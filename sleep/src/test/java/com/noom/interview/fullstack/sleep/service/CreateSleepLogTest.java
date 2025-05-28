@@ -45,7 +45,7 @@ class CreateSleepLogTest {
         LocalTime goToBedTime = LocalTime.of(Integer.parseInt(request.getGoToBedTime().substring(0, 2)), Integer.parseInt(request.getGoToBedTime().substring(3, 5)));
         LocalTime wakeUpTime = LocalTime.of(Integer.parseInt(request.getWakeUpTime().substring(0, 2)), Integer.parseInt(request.getWakeUpTime().substring(3, 5)));
 
-        SleepLogDTO sleepLogDTO = new SleepLogDTO(LocalDate.parse("2025-05-10"), goToBedTime, wakeUpTime, Duration.parse("PT8H30M"), MorningMood.GOOD);
+        SleepLogDTO sleepLogDTO = new SleepLogDTO(1, LocalDate.parse("2025-05-10"), goToBedTime, wakeUpTime, Duration.parse("PT8H30M"), MorningMood.GOOD);
 
         when(getUser.getById(request.getUserId())).thenReturn(user);
         doNothing().when(sleepLogRepository).save(any(SleepLog.class));
@@ -69,6 +69,19 @@ class CreateSleepLogTest {
         } catch (IllegalArgumentException e) {
             assertNotNull(e);
             assertEquals("Sleep Log data is missing on body request", e.getMessage());
+        }
+    }
+
+    @Test
+    public void createSleepDateInTheFuture() {
+        CreateSleepLogRequest request = new CreateSleepLogRequest(LocalDate.now().plusDays(1).toString(), "22:30", "07:00", "GOOD", 1);
+
+        try {
+            createSleepLog.create(request);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertNotNull(e);
+            assertEquals("Field sleepDate cannot be in the future", e.getMessage());
         }
     }
 

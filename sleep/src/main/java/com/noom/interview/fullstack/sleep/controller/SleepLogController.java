@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("sleep-log")
+@RequestMapping("sleep-logs")
 public class SleepLogController {
 
     private final CreateSleepLog createSleepLog;
@@ -31,8 +31,8 @@ public class SleepLogController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<SleepLogDTO> getByDate(@PathVariable int userId, @RequestParam(required = false) String date) {
-        SleepLogDTO sleepLogDTO = getSleepLog.getByDateFromRequest(userId, date);
+    public ResponseEntity<SleepLogDTO> getByDate(@PathVariable int userId, @RequestParam(required = false) String sleepDate) {
+        SleepLogDTO sleepLogDTO = getSleepLog.getByDateFromRequest(userId, sleepDate);
         return ResponseEntity.ok(sleepLogDTO);
     }
 

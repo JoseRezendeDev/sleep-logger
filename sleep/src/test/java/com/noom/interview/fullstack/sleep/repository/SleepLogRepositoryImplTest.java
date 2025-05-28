@@ -59,6 +59,7 @@ class SleepLogRepositoryImplTest {
         SleepLog createdSleepLog = sleepLogRepository.getByDate(sleepLog.getUser().getId(), LocalDate.now());
 
         createdSleepLog.setUser(sleepLog.getUser());
+        sleepLog.setId(createdSleepLog.getId());
 
         assertEquals(sleepLog, createdSleepLog);
     }
