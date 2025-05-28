@@ -49,10 +49,12 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
+        run: chmod +x sleep/gradlew
 
       - name: Run Flyway migrations
         run: ./gradlew flywayMigrate -i
+        working-directory: sleep
 
       - name: Run tests
         run: ./gradlew test
+        working-directory: sleep
