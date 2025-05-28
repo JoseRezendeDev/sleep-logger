@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -33,8 +35,9 @@ class GetSleepLogTest {
         int userId = 1;
 
         LocalDate today = LocalDate.now();
-        LocalTime goToBedTime = LocalTime.of(1, 0);
-        LocalTime wakeUpTime = LocalTime.of(10, 40);
+        LocalTime goToBedTime = LocalTime.of(22, 0);
+        LocalTime wakeUpTime = LocalTime.of(6, 0);
+        Duration totalTimeInBed = Duration.parse("PT8H");
         MorningMood morningMood = MorningMood.GOOD;
 
         when(sleepLogRepository.getByDate(userId, LocalDate.now()))
@@ -48,6 +51,7 @@ class GetSleepLogTest {
         assertEquals(today, sleepLogDTO.getSleepDate());
         assertEquals(goToBedTime, sleepLogDTO.getGoToBedTime());
         assertEquals(wakeUpTime, sleepLogDTO.getWakeUpTime());
+        assertEquals(totalTimeInBed, sleepLogDTO.getTotalTimeInBed());
         assertEquals(morningMood, sleepLogDTO.getMorningMood());
     }
 
@@ -56,8 +60,9 @@ class GetSleepLogTest {
         int userId = 1;
 
         LocalDate date = LocalDate.of(2025, 5, 17);
-        LocalTime goToBedTime = LocalTime.of(1, 0);
-        LocalTime wakeUpTime = LocalTime.of(10, 40);
+        LocalTime goToBedTime = LocalTime.of(23, 0);
+        LocalTime wakeUpTime = LocalTime.of(7, 30);
+        Duration totalTimeInBed = Duration.parse("PT8H30M");
         MorningMood morningMood = MorningMood.GOOD;
 
         when(sleepLogRepository.getByDate(userId, date))
@@ -71,6 +76,7 @@ class GetSleepLogTest {
         assertEquals(date, sleepLogDTO.getSleepDate());
         assertEquals(goToBedTime, sleepLogDTO.getGoToBedTime());
         assertEquals(wakeUpTime, sleepLogDTO.getWakeUpTime());
+        assertEquals(totalTimeInBed, sleepLogDTO.getTotalTimeInBed());
         assertEquals(morningMood, sleepLogDTO.getMorningMood());
     }
 
@@ -81,6 +87,7 @@ class GetSleepLogTest {
         LocalDate today = LocalDate.now();
         LocalTime goToBedTime = LocalTime.of(1, 0);
         LocalTime wakeUpTime = LocalTime.of(10, 40);
+        Duration totalTimeInBed = Duration.parse("PT9H40M");
         MorningMood morningMood = MorningMood.GOOD;
 
         when(sleepLogRepository.getByDate(userId, today))
@@ -94,6 +101,7 @@ class GetSleepLogTest {
         assertEquals(today, sleepLogDTO.getSleepDate());
         assertEquals(goToBedTime, sleepLogDTO.getGoToBedTime());
         assertEquals(wakeUpTime, sleepLogDTO.getWakeUpTime());
+        assertEquals(totalTimeInBed, sleepLogDTO.getTotalTimeInBed());
         assertEquals(morningMood, sleepLogDTO.getMorningMood());
     }
 

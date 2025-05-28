@@ -70,11 +70,18 @@ public class CreateSleepLog {
             return LocalDate.now();
         }
 
+        LocalDate sleepDate;
         try {
-            return LocalDate.parse(request.getSleepDate());
+            sleepDate = LocalDate.parse(request.getSleepDate());
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Field sleepDate must be in the format YYYY-MM-DD");
         }
+
+        if (sleepDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Field sleepDate cannot be in the future");
+        }
+
+        return sleepDate;
     }
 
     private void validateRequest(CreateSleepLogRequest request) {

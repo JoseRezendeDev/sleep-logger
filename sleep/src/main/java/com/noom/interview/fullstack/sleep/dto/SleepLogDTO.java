@@ -1,5 +1,6 @@
 package com.noom.interview.fullstack.sleep.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.noom.interview.fullstack.sleep.model.MorningMood;
 
 import java.time.Duration;
@@ -8,18 +9,33 @@ import java.time.LocalTime;
 import java.util.Objects;
 
 public class SleepLogDTO {
+
+    private final int id;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private final LocalDate sleepDate;
+
+    @JsonFormat(pattern = "HH:mm")
     private final LocalTime goToBedTime;
+
+    @JsonFormat(pattern = "HH:mm")
     private final LocalTime wakeUpTime;
+
     private final Duration totalTimeInBed;
+
     private final MorningMood morningMood;
 
-    public SleepLogDTO(LocalDate sleepDate, LocalTime goToBedTime, LocalTime wakeUpTime, Duration totalTimeInBed, MorningMood morningMood) {
+    public SleepLogDTO(int id, LocalDate sleepDate, LocalTime goToBedTime, LocalTime wakeUpTime, Duration totalTimeInBed, MorningMood morningMood) {
+        this.id = id;
         this.sleepDate = sleepDate;
         this.goToBedTime = goToBedTime;
         this.wakeUpTime = wakeUpTime;
         this.totalTimeInBed = totalTimeInBed;
         this.morningMood = morningMood;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public LocalDate getSleepDate() {

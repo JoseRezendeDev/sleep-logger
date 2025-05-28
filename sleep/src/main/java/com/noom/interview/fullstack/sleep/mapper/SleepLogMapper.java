@@ -6,7 +6,7 @@ import com.noom.interview.fullstack.sleep.model.SleepLog;
 public class SleepLogMapper {
 
     public static SleepLogDTO toDTO(SleepLog sleepLog) {
-        return new SleepLogDTO(sleepLog.getSleepDate(), sleepLog.getGoToBedTime(),
+        return new SleepLogDTO(sleepLog.getId(), sleepLog.getSleepDate(), sleepLog.getGoToBedTime(),
                 sleepLog.getWakeUpTime(), sleepLog.getTotalTimeInBed(),
                 sleepLog.getMorningMood());
     }

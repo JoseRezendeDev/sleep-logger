@@ -27,18 +27,18 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/sleep-log/1?date=2025-05-12",
+					"raw": "{{base_url}}/sleep-logs/1?sleepDate=2025-05-24",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"sleep-log",
+						"sleep-logs",
 						"1"
 					],
 					"query": [
 						{
-							"key": "date",
-							"value": "2025-05-12"
+							"key": "sleepDate",
+							"value": "2025-05-24"
 						}
 					]
 				},
@@ -66,12 +66,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/sleep-log/month-averages/1",
+					"raw": "{{base_url}}/sleep-logs/month-averages/1",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"sleep-log",
+						"sleep-logs",
 						"month-averages",
 						"1"
 					]
@@ -102,7 +102,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"sleepDate\": \"2025-05-12\",\n\t\"goToBedTime\": \"22:55\",\n    \"wakeUpTime\": \"09:00\",\n    \"morningMood\": \"OK\",\n    \"userId\": \"1\"\n}",
+					"raw": "{\n    \"sleepDate\": \"2025-05-24\",\n\t\"goToBedTime\": \"22:55\",\n    \"wakeUpTime\": \"03:00\",\n    \"morningMood\": \"GOOD\",\n    \"userId\": \"1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -110,12 +110,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/sleep-log",
+					"raw": "{{base_url}}/sleep-logs",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"sleep-log"
+						"sleep-logs"
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."

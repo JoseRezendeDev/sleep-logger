@@ -1,11 +1,19 @@
 package com.noom.interview.fullstack.sleep.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Objects;
 
 public class CreateSleepLogRequest {
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private String sleepDate;
+
+    @JsonFormat(pattern = "HH:mm")
     private String goToBedTime;
+
+    @JsonFormat(pattern = "HH:mm")
     private String wakeUpTime;
+
     private String morningMood;
     private Integer userId;
 
